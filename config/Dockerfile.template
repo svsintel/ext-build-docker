@@ -1,0 +1,67 @@
+# FROM ubuntu:18.04
+FROM ubuntu:bionic-20190307
+MAINTAINER shaunx.savage@intel.com
+
+### PLACEHOLDER_SET_ENV_VARIABLES ###
+RUN mkdir -p /opt/pws/bin /opt/pws/var/assets
+
+### PLACEHOLDER_COPY_APT_CONF ###
+
+
+### PLACEHOLDER_COPY_VAR_FILES ###
+
+ENV TZ=__TIMEZONE__
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get -y update
+RUN apt-get -y install apt-utils
+RUN apt-get -y upgrade
+RUN apt-get -y install language-pack-en
+RUN apt-get -y install apt-transport-https autoconf autoconf-archive automake bison bsdmainutils build-essential cmake curl device-tree-compiler fastboot flex gawk gcc git iftop iputils-ping jq libarchive-zip-perl libmetis-dev libncurses-dev libssl-dev libtool libusb-1.0 lsof lxterminal lynx make metis netcat-openbsd net-tools nmap pkg-config python3 python3-dev python3-pip python3-pygraphviz python3-tabulate python-dev python-pip rsync screen software-properties-common subversion sudo swig tcpdump telnet time tmux tree u-boot-tools unzip usbutils uuid-dev vim wget xterm zip autoconf gtk+2.0-dev glib2.0-dev libglade2-dev qt4-dev-tools
+RUN update-locale LANG=en_IE.UTF-8
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+RUN apt-get -y install  nodejs
+# If we want to install Atom graphic editor...
+### RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+### RUN apt-get update && sudo apt-get -y install yarn
+# Add Atom editor support
+### RUN wget -q https://packagecloud.io/AtomEditor/atom/gpgkey -O- | apt-key add -
+### RUN add-apt-repository "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main"
+### RUN apt-get -y update && apt-get -y install atom
+
+# Support encrypted .netrc for artifactory authentication (git lfs)
+#** RUN curl --proxy $http_proxy -o /usr/local/bin/git-credential-netrc https://raw.githubusercontent.com/git/git/master/contrib/credential/netrc/git-credential-netrc && chmod a+rx /usr/local/bin/git-credential-netrc
+
+# Create a user with same name and UID as user building Docker image.
+
+ENV USER __USER__
+RUN groupadd -g 9000 testuser
+
+RUN useradd --create-home --shell /bin/bash --password pass -u __UID__  __USER__
+#RUN useradd -G 9000 __USER__
+
+RUN echo "__USER__  ALL=(ALL)    NOPASSWD:ALL" > /etc/sudoers.d/extra
+
+# Need a fake version of udevadm or build will fail.
+RUN mkdir -p /etc/udev/rules.d && printf "#!/bin/bash\nexit 0\n" > /bin/udevadm && chmod a+rx /bin/udevadm
+
+RUN printf "MV_TOOLS_DIR=/opt/pws/mnt/cache/mv_tools\nPYTHONPATH=/opt/movidius/caffe/python\n" >> /etc/bash.bashrc
+RUN echo "alias ng=\"make -f newMakefile.mk\"" >>  /etc/bash.bashrc
+
+### PLACEHOLDER_COPY_BIN_FILES ###
+
+RUN chmod a+rx /opt/pws/bin/*.sh
+RUN chown -R __USER__:__USER__ /opt /home/__USER__
+#* RUN npm config set proxy ${HTTP_PROXY}
+#* RUN npm config set https-proxy ${HTTPS_PROXY}
+RUN echo 'if [ -d "/opt/pws/bin" ] ; then PATH="/opt/pws/bin:$PATH"; fi' >> /home/__USER__/.profile
+RUN echo 'PYTHONPATH=/opt/movidius/caffe/python:TEMPLATE:$PYTHONPATH' >> /home/__USER__/.profile
+
+
+# Run commands as $USER
+USER  __USER__
+RUN pip3 install allpairspy antlr4-python3-runtime==4.5.3 commentjson cppyy onnx opencv-python tensorpack 
+RUN /opt/pws/bin/pws-install-dependencies.sh
+WORKDIR /home/__USER__
+ENTRYPOINT ["/opt/pws/bin/pws-entrypoint.sh"]
