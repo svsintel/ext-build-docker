@@ -10,7 +10,7 @@ NUM_CONSUMED_ARGS=0
 OPT_AUTO_DELETE="--rm"
 OPT_PRIVILEGE=""
 PROG_NAME=$(basename $0)
-PWS_IMAGE=${PWS_IMAGE:-af01p-ir.devtools.intel.com:6560/mvstemdockerrepo-ir-local/mig_ci_u18_ng:stable}
+PWS_IMAGE=${PWS_IMAGE:-MovidiusBuild}
 SHARES_DIR="${PWS_SHARES_DIR:-/srv/docker-helper/shares}"
 WANT_DEBUG=no
 WANT_GID=$(id -g)
@@ -167,7 +167,6 @@ function main() {
   env_args+=" -e WANT_MOUNT_HOME=${WANT_MOUNT_HOME}"
   env_args+=" -e WANT_UID=${WANT_UID}"
   env_args+=" -e WANT_USER=${WANT_USER}"
-  env_args+=" -e MESH_AGENT=${MESH_AGENT}"
   printf "(%s)\n" "${PWS_IMAGE}"
   [[ -n "${WANT_HOSTNAME}" ]] && hostname_opt="-h ${WANT_HOSTNAME}"
 

@@ -15,10 +15,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
-RUN apt-get -y install apt-utils
+RUN apt-get -y install apt-utils dialog
 RUN apt-get -y upgrade
 RUN apt-get -y install language-pack-en
 RUN apt-get -y install apt-transport-https autoconf autoconf-archive automake bison bsdmainutils build-essential cmake curl device-tree-compiler fastboot flex gawk gcc git iftop iputils-ping jq libarchive-zip-perl libmetis-dev libncurses-dev libssl-dev libtool libusb-1.0 lsof lxterminal lynx make metis netcat-openbsd net-tools nmap pkg-config python3 python3-dev python3-pip python3-pygraphviz python3-tabulate python-dev python-pip rsync screen software-properties-common subversion sudo swig tcpdump telnet time tmux tree u-boot-tools unzip usbutils uuid-dev vim wget xterm zip autoconf gtk+2.0-dev glib2.0-dev libglade2-dev qt4-dev-tools
+RUN apt-get -y install python3-numpy git-lfs python3-yaml
 RUN update-locale LANG=en_IE.UTF-8
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 RUN apt-get -y install  nodejs
@@ -38,7 +39,7 @@ RUN apt-get -y install  nodejs
 ENV USER __USER__
 RUN groupadd -g 9000 testuser
 
-RUN useradd --create-home --shell /bin/bash --password pass -u __UID__  __USER__
+RUN useradd --create-home --shell /bin/bash --password pass -U -u __UID__  __USER__
 #RUN useradd -G 9000 __USER__
 
 RUN echo "__USER__  ALL=(ALL)    NOPASSWD:ALL" > /etc/sudoers.d/extra

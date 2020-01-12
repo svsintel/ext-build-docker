@@ -57,7 +57,8 @@ function main() {
     local f
     local linaro_file="gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu.tar.xz" 
     trap _finally EXIT
-    install_git_lfs
+    #install_git_lfs
+    # install python3-numpy to get the incluse files
     /opt/pws/bin/pws-install-machine-learning-frameworks.sh
     pip3 install tensorpack opencv-python
     pip3 uninstall -y numpy==1.17.0 || true

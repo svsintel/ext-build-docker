@@ -7,21 +7,16 @@ set -eu
 # Primary group of user.
 GID=$(id -g)
 PROG_NAME=$(basename $0)
-#PWS_IMAGE=${PWS_IMAGE:-af01p-ir.devtools.intel.com:6560/mvstemdockerrepo-ir-local/mig_ci_u18_ng:20191220a}
+PWS_IMAGE=${PWS_IMAGE:-movidiusbuild}
 export STEM_ROOT="${STEM_ROOT:-}"
 TMP_ROOT=""
 
-# declare -a EXPORT_VARS=("HTTP_PROXY" "HTTPS_PROXY" "FTP_PROXY" "GID" "NO_PROXY"  "SOCKS_PROXY" "TIMEZONE" "UID" "USER" "http_proxy" "https_proxy"  "socks_proxy" "no_proxy" )
 declare -a EXPORT_VARS=("GID" "TIMEZONE" "UID" "USER" )
-
-#function at_exit() { [[ -d "${TMP_ROOT}" ]] && rm -Rf "${TMP_ROOT}"; }
-#trap at_exit  EXIT
-
 
 function fatal() { printf "*** ${PROG_NAME}: %s\n" "$@"; exit 1; }
 
-[ -n ${STEM_ROOT} ] || fatal "\$STEM_ROOT not defined"
-[ -d ${STEM_ROOT} ] || fatal "Directory \$STEM_ROOT ($STEM_ROOT) not found"
+#[ -n ${STEM_ROOT} ] || fatal "\$STEM_ROOT not defined"
+#[ -d ${STEM_ROOT} ] || fatal "Directory \$STEM_ROOT ($STEM_ROOT) not found"
 
 
 ##############################################################################
@@ -130,12 +125,13 @@ function main() {
   if [ -n "${HTTP_PROXY}" ]; then
     echo $PWD
     ls -lg
-#    printf "Acquire::http::Proxy \"%s/\";\n" "${HTTP_PROXY}" > ./assets/apt.conf
-#    printf "Acquire::https::Proxy \"%s/\";\n" "${HTTPS_PROXY}" >> ./assets/apt.conf
-#    sed -i "/PLACEHOLDER_COPY_APT_CONF/a COPY assets\/apt.conf \/etc\/apt\/apt.conf" Dockerfile
+    printf "Acquire::http::Proxy \"%s/\";\n" "${HTTP_PROXY}" > ./assets/apt.conf
+    printf "Acquire::https::Proxy \"%s/\";\n" "${HTTPS_PROXY}" >> ./assets/apt.conf
+    sed -i "/PLACEHOLDER_COPY_APT_CONF/a COPY assets\/apt.conf \/etc\/apt\/apt.conf" Dockerfile
   fi
 
   # Build the Docker image.
+  #docker build -t "${PWS_IMAGE}"  .
   docker build -t "${PWS_IMAGE}" --build-arg http_proxy=http://proxy-jf.intel.com:911 --build-arg https_proxy=http://proxy-jf.intel.com:912 .
     
   # If the Docker image name is of the form  <URI>/<name>, then push

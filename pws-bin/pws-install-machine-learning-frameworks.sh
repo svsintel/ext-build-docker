@@ -4,7 +4,7 @@
 ######################################################################
 
 # Exit on any failure.
-set -e
+set -x
 # Exit if unitialized variable used.
 set -u
 # A temporary work directory.
@@ -37,7 +37,9 @@ function _finally() {
 function setup() {
   cd ${WORK_DIR}
   # Extract the NCSDK from its archive.
-  tar -xzf /opt/pws/var/assets/Neural_Compute_v2.10.00.04.tar.gz 
+  printf "TARNC $(pwd); $(ls /opt/pws/var/assets/)"
+  
+  tar -xf /opt/pws/var/assets/Neural_Compute_v2.10.00.04.tar.gz 
   
   # Customize the NCSDK installer to install the required packages.
   

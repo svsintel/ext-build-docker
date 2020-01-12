@@ -10,9 +10,8 @@ WANT_DEBUG="${WANT_DEBUG:-yes}"
 LOGIN=""
 [[ "${WANT_LOGIN}" == "yes" ]] && LOGIN="-i"
 LOGIN_OPTS=""
-#* START_MESH_CMD="/opt/pws/bin/pws-start-mesh-agent.sh"
 
-[[ "${user}" == "testuser" ]] || LOGIN_OPTS="sudo -E -H -g #${gid} -u ${user} ${LOGIN}"
+#[[ "${user}" == "testuser" ]] || LOGIN_OPTS="sudo -E -H -g #${gid} -u ${user} ${LOGIN}"
 [[ "${WANT_DEBUG}" == "yes" ]] && printf "User info: UID=%s GID=%d USERNAME=%s LOGIN_OPTS=%s\n" ${uid} ${gid} "${user}" "${LOGIN_OPTS}"
 
 if [[ "${UID}" != 0 ]]; then
