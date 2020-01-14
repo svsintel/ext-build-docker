@@ -132,7 +132,7 @@ function main() {
 
   # Build the Docker image.
   #docker build -t "${PWS_IMAGE}"  .
-  docker build -t "${PWS_IMAGE}" --build-arg http_proxy=http://proxy-jf.intel.com:911 --build-arg https_proxy=http://proxy-jf.intel.com:912 .
+  docker build -t "${PWS_IMAGE}"
     
   # If the Docker image name is of the form  <URI>/<name>, then push
   # it to the appropriate Docker respository.
